@@ -6,7 +6,26 @@
 
     <groupId>com.lxs</groupId>
     <artifactId>create</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>create-dependency-injection</module>
+    </modules>
+
+
+    <properties>
+        <lombok.version>1.18.16</lombok.version>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+            <version>${lombok.version}</version>
+        </dependency>
+    </dependencies>
 
 
 </project>
