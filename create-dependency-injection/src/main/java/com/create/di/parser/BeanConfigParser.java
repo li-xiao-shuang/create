@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface BeanConfigParser {
 
-    List parse(InputStream inputStream);
+    List<BeanDefinition> parse(InputStream inputStream);
 
-    List parse(String configContent);
+    List<BeanDefinition> parse(String configContent);
 }

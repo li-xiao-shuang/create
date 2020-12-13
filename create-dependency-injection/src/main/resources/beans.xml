@@ -1,0 +1,9 @@
+<beans>
+
+    <bean id="config" class="com.create.di.example.Config">
+        <constructor-arg ref="String" value="127.0.0.1"/>
+        <constructor-arg ref="String" value="root"/>
+        <constructor-arg ref="String" value="123456"/>
+    </bean>
+
+</beans>
