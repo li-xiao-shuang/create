@@ -4,6 +4,7 @@ import com.create.di.exception.BeanCreationFailureException;
 import com.create.di.exception.NoSuchBeanDefinitionException;
 import com.create.di.parser.BeanDefinition;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +16,7 @@ public class BeansFactory {
 
     public void addBeanDefinitions(List<BeanDefinition> beanDefinitionList) {
         for (BeanDefinition beanDefinition : beanDefinitionList) {
-            this.beanDefinitions.putIfAbsent(beanDefinition.getId(), beanDefinition);
+            this.beanDefinitions.putIfAbsent(beanDefinition.getName(), beanDefinition);
         }
 
         for (BeanDefinition beanDefinition : beanDefinitionList) {
@@ -34,15 +35,15 @@ public class BeansFactory {
     }
 
     protected Object createBean(BeanDefinition beanDefinition) {
-        if (beanDefinition.isSingleton() && singletonObjects.contains(beanDefinition.getId())) {
-            return singletonObjects.get(beanDefinition.getId());
+        if (beanDefinition.isSingleton() && singletonObjects.contains(beanDefinition.getName())) {
+            return singletonObjects.get(beanDefinition.getName());
         }
 
         Object bean = null;
         try {
             Class beanClass = Class.forName(beanDefinition.getClassName());
             List<BeanDefinition.ConstructorArg> args = beanDefinition.getConstructorArgs();
-            if (args.isEmpty()) {
+            if (args != null) {
                 bean = beanClass.newInstance();
             } else {
                 Class[] argClasses = new Class[args.size()];
@@ -69,8 +70,8 @@ public class BeansFactory {
         }
 
         if (bean != null && beanDefinition.isSingleton()) {
-            singletonObjects.putIfAbsent(beanDefinition.getId(), bean);
-            return singletonObjects.get(beanDefinition.getId());
+            singletonObjects.putIfAbsent(beanDefinition.getName(), bean);
+            return singletonObjects.get(beanDefinition.getName());
         }
         return bean;
     }

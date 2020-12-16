@@ -22,21 +22,14 @@ public class DiClassPathXmlApplicationContext implements DiApplicationContext {
     }
 
     private void loadBeanDefinitions(String configLocation) {
-        InputStream in = null;
-        try {
-            in = this.getClass().getResourceAsStream("/" + configLocation);
+        try (InputStream in = this.getClass().getResourceAsStream("/" + configLocation)) {
             if (null == in) {
                 throw new RuntimeException("Can not find config file: " + configLocation);
             }
             List<BeanDefinition> beanDefinitions = beanConfigParser.parse(in);
             beansFactory.addBeanDefinitions(beanDefinitions);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) { // TODO: log error
-                }
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
