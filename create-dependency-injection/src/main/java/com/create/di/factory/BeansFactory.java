@@ -39,30 +39,33 @@ public class BeansFactory {
             return singletonObjects.get(beanDefinition.getName());
         }
 
+        // TODO: 2020/12/18 通过反射加载类、类加载器加载、字节码加载
         Object bean = null;
         try {
             Class beanClass = Class.forName(beanDefinition.getClassName());
             List<BeanDefinition.ConstructorArg> args = beanDefinition.getConstructorArgs();
-            if (args != null) {
-                bean = beanClass.newInstance();
+            if (args == null) {
+                bean = beanClass.getDeclaredConstructor().newInstance();
             } else {
-                Class[] argClasses = new Class[args.size()];
+                Class[] parameterTypes = new Class[args.size()];
                 Object[] argObjects = new Object[args.size()];
+                
                 for (int i = 0; i < args.size(); ++i) {
                     BeanDefinition.ConstructorArg arg = args.get(i);
                     if (!arg.isIfRef()) {
-                        argClasses[i] = arg.getType();
+                        parameterTypes[i] = arg.getType();
                         argObjects[i] = arg.getArg();
                     } else {
-                        BeanDefinition refBeanDefinition = beanDefinitions.get(arg.getArg());
-                        if (refBeanDefinition == null) {
-                            throw new NoSuchBeanDefinitionException("Bean is not defined: " + arg.getArg());
-                        }
-                        argClasses[i] = Class.forName(refBeanDefinition.getClassName());
-                        argObjects[i] = createBean(refBeanDefinition);
+                        // TODO: 2020/12/18 注入是类对象引用的实现
+//                        BeanDefinition refBeanDefinition = beanDefinitions.get(arg.getArg());
+//                        if (refBeanDefinition == null) {
+//                            throw new NoSuchBeanDefinitionException("Bean is not defined: " + arg.getArg());
+//                        }
+//                        argClasses[i] = Class.forName(refBeanDefinition.getClassName());
+//                        argObjects[i] = createBean(refBeanDefinition);
                     }
                 }
-                bean = beanClass.getConstructor(argClasses).newInstance(argObjects);
+                bean = beanClass.getConstructor(parameterTypes).newInstance(argObjects);
             }
         } catch (ClassNotFoundException | IllegalAccessException
                 | InstantiationException | NoSuchMethodException | InvocationTargetException e) {

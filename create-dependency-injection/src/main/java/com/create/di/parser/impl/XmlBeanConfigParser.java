@@ -22,7 +22,6 @@ public class XmlBeanConfigParser implements BeanConfigParser {
             Document document = new SAXReader().read(inputStream);
             Element beans = document.getRootElement();
             Element bean = beans.element("bean");
-            List<Element> attributes = bean.elements();
             Attribute id = bean.attribute("id");
             Attribute path = bean.attribute("class");
 
@@ -31,10 +30,15 @@ public class XmlBeanConfigParser implements BeanConfigParser {
             beanDefinition.setClassName(path.getText());
 
             List<BeanDefinition.ConstructorArg> constructorArgs = new ArrayList<>();
+            List<Element> attributes = bean.elements();
+
             for (Element element : attributes) {
                 Attribute value = element.attribute("value");
+                Attribute ref = element.attribute("ref");
 
                 BeanDefinition.ConstructorArg constructorArg = new BeanDefinition.ConstructorArg();
+                constructorArg.setIfRef(false);
+                constructorArg.setType(ref.getText().getClass());
                 constructorArg.setArg(value.getText());
                 constructorArgs.add(constructorArg);
             }
